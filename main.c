@@ -93,7 +93,29 @@ void driver_close() {
     free(url);
 }
 
-char *driver_current_url() {
+char *driver_getTitle() {
+    char *url, *r, *title;
+    int code;
+    json_t *json;
+    size_t c;
+
+    makestr(url, "localhost:9515/session/%s/title", DRIVER_SESSION_ID);
+
+    r = hget_method("GET", url, "", &code, "");
+
+    json = json_parse(r, &c);
+
+    title = malloc(strlen(json[0].value) + 1);
+    strcpy(title, json[0].value);
+
+    json_free(json, c);
+    free(url);
+    free(r);
+    
+    return title;
+}
+
+char *driver_getUrl() {
     char *r, *url, *current_url;
     int code;
     json_t *json;
@@ -587,12 +609,61 @@ void driver_alert_dismiss() {
     free(r);
 }
 
+void driver_wait_implicitly(int seconds) {
+    sleep(seconds);
+}
+
+void driver_wait_until_title_is(char *title, int max_time) {
+    unsigned long initial_time = time(0);
+    char *current_title = driver_getTitle();
+
+    while (strcmp(current_title, title) != 0) {
+        free(current_title);
+        current_title = driver_getTitle();
+        
+        if (time(0) >= initial_time + max_time -1) break;
+
+        sleep(1);
+    }
+}
+void driver_wait_until_title_contains(char *key, int max_time) {
+    unsigned long initial_time = time(0);
+    char *current_title = driver_getTitle();
+
+    while (indexOf(current_title, key, 0) == -1) {
+        free(current_title);
+        current_title = driver_getTitle();
+
+        if (time(0) >= initial_time + max_time -1) break;
+
+        sleep(1);
+    }
+}
+
+void driver_wait_until_alert_is_present(int max_time) {
+    unsigned long initial_time = time(0);
+    char *alert_brute;
+    json_t *json;
+    size_t c;
+
+    do {
+
+        alert_brute = driver_alert_get();
+        json = json_parse(alert_brute, &c);
+
+        json_free(json, c);
+        free(alert_brute);
+
+        if (time(0) >= initial_time + max_time - 1);
+
+        sleep(1);
+    } while (c != 1);
+}
+
 int main(void) {
     driver_open();
 
     driver_get("https://www.w3.org/TR/webdriver");
-
-
 
     return 0;
 }
