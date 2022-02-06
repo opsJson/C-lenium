@@ -1,0 +1,13 @@
+{
+    "files.associations": {
+        "stdio.h": "c",
+        "easy-string.h": "c",
+        "hget.h": "c",
+        "ctype.h": "c",
+        "json-parser.h": "c",
+        "main.h": "c",
+        "stdarg.h": "c",
+        "file-buffer.h": "c",
+        "time.h": "c"
+    }
+}
