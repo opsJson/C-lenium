@@ -402,23 +402,68 @@ void driver_switch_to_default_content();
 void driver_switch_to_alert();
 
 void driver_window_fullscreen() {
+    char *url, *r;
+    int code;
 
+    makestr(url, "localhost:9515/session/%s/window/fullscreen", DRIVER_SESSION_ID);
+
+    r = get(url, "{}", &code, "");
+
+    free(url);
+    free(r);
 }
 
 void driver_window_minimize() {
+    char *url, *r;
+    int code;
 
+    makestr(url, "localhost:9515/session/%s/window/minimize", DRIVER_SESSION_ID);
+
+    r = get(url, "{}", &code, "");
+
+    free(url);
+    free(r);
 }
 
 void driver_window_maximize() {
+    char *url, *r;
+    int code;
 
-}
+    makestr(url, "localhost:9515/session/%s/window/maximize", DRIVER_SESSION_ID);
 
-void driver_window_rect_set(char *x, char *y) {
+    r = get(url, "{}", &code, "");
 
+    free(url);
+    free(r);
 }
 
 char *driver_window_rect_get() {
-    return NULL;
+    char *url, *r;
+    int code;
+
+    makestr(url, "localhost:9515/session/%s/window/rect", DRIVER_SESSION_ID);
+
+    r = hget_method("GET", url, "", &code, "");
+
+    free(url);
+
+    return r;
+}
+
+void driver_window_rect_set(char *x, char *y, char *width, char *height) {
+    char *url, *data, *r;
+    int code;
+
+    makestr(url, "localhost:9515/session/%s/window/rect", DRIVER_SESSION_ID);
+
+    makestr(data, "{\\\"x\\\":%s,\\\"y\\\":%s,"
+    "\\\"width\\\":%s,\\\"height\\\":%s}", x, y, width, height);
+
+    r = get(url, data, &code, "Content-Type: application/json");
+
+    free(url);
+    free(data);
+    free(r);
 }
 
 void driver_add_cookie(struct cookies_s *cookies) {
@@ -546,6 +591,8 @@ int main(void) {
     driver_open();
 
     driver_get("https://www.w3.org/TR/webdriver");
+
+
 
     return 0;
 }

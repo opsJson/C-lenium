@@ -62,7 +62,7 @@ void driver_switch_to_alert();
 void driver_window_fullscreen();
 void driver_window_minimize();
 void driver_window_maximize();
-void driver_window_rect_set(char *x, char *y);
+void driver_window_rect_set(char *x, char *y, char *width, char *height);
 char *driver_window_rect_get();
 
 void driver_add_cookie();
